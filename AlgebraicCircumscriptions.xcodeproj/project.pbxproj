@@ -13,6 +13,9 @@
 		9B40AF3D1B8692F500A5965F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9B40AF3C1B8692F500A5965F /* Images.xcassets */; };
 		9B40AF401B8692F500A5965F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 9B40AF3E1B8692F500A5965F /* LaunchScreen.xib */; };
 		9B40AF4C1B8692F500A5965F /* AlgebraicCircumscriptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B40AF4B1B8692F500A5965F /* AlgebraicCircumscriptionsTests.swift */; };
+		9B40AF571B8693F800A5965F /* ACVector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B40AF561B8693F800A5965F /* ACVector.swift */; };
+		9BBFC23E1B8B9B8B0049FD8E /* ACMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBFC23D1B8B9B8B0049FD8E /* ACMatrix.swift */; };
+		9BBFC2401B8BA4790049FD8E /* Euclidean.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BBFC23F1B8BA4790049FD8E /* Euclidean.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		9B40AF451B8692F500A5965F /* AlgebraicCircumscriptionsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AlgebraicCircumscriptionsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		9B40AF4A1B8692F500A5965F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9B40AF4B1B8692F500A5965F /* AlgebraicCircumscriptionsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlgebraicCircumscriptionsTests.swift; sourceTree = "<group>"; };
+		9B40AF561B8693F800A5965F /* ACVector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACVector.swift; sourceTree = "<group>"; };
+		9BBFC23D1B8B9B8B0049FD8E /* ACMatrix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ACMatrix.swift; sourceTree = "<group>"; };
+		9BBFC23F1B8BA4790049FD8E /* Euclidean.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Euclidean.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +83,7 @@
 		9B40AF321B8692F500A5965F /* AlgebraicCircumscriptions */ = {
 			isa = PBXGroup;
 			children = (
+				9B40AF551B86931400A5965F /* Base */,
 				9B40AF351B8692F500A5965F /* AppDelegate.swift */,
 				9B40AF371B8692F500A5965F /* ViewController.swift */,
 				9B40AF391B8692F500A5965F /* Main.storyboard */,
@@ -110,6 +117,16 @@
 				9B40AF4A1B8692F500A5965F /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9B40AF551B86931400A5965F /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				9B40AF561B8693F800A5965F /* ACVector.swift */,
+				9BBFC23D1B8B9B8B0049FD8E /* ACMatrix.swift */,
+				9BBFC23F1B8BA4790049FD8E /* Euclidean.swift */,
+			);
+			name = Base;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -212,7 +229,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9BBFC2401B8BA4790049FD8E /* Euclidean.swift in Sources */,
 				9B40AF381B8692F500A5965F /* ViewController.swift in Sources */,
+				9B40AF571B8693F800A5965F /* ACVector.swift in Sources */,
+				9BBFC23E1B8B9B8B0049FD8E /* ACMatrix.swift in Sources */,
 				9B40AF361B8692F500A5965F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,6 +429,7 @@
 				9B40AF511B8692F500A5965F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		9B40AF521B8692F500A5965F /* Build configuration list for PBXNativeTarget "AlgebraicCircumscriptionsTests" */ = {
 			isa = XCConfigurationList;
@@ -417,6 +438,7 @@
 				9B40AF541B8692F500A5965F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

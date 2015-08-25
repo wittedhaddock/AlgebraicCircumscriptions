@@ -8,7 +8,7 @@
 
 import Foundation
 
-public class ACVector: Euclidean {
+public class ACVector: Euclidean, Printable {
     private var elements: [Double]? = [Double]()
     
     public var elementArray: [Double]? {
@@ -40,9 +40,9 @@ public class ACVector: Euclidean {
         get {
             if self.elements == nil {
                 return 0
-            }
+            } 
             else {
-                return self.elementsSquared!.reduce(0, combine: +)
+                return sqrt(self.elementsSquared!.reduce(0, combine: +))
             }
         }
         set (newValue){
@@ -74,9 +74,14 @@ public class ACVector: Euclidean {
     }
     
     public func normalize () {
+        let immunitableMagnitude = self.magnitude
         for i in 0..<self.dimension {
-            self[i] /= self.magnitude
+            self[i] /= immunitableMagnitude
         }
+    }
+    
+     public var description: String {
+        return "\(self.elements!)"
     }
 }
 

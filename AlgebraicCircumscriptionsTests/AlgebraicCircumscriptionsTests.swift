@@ -52,7 +52,7 @@ class AlgebraicCircumscriptionsTests: XCTestCase {
         var squaredElements = elements.map({ (var item) -> Double in
                 return item * item
             })
-        XCTAssert(vec.magnitude == squaredElements.reduce(0, combine: +))
+        XCTAssert(vec.magnitude == sqrt(squaredElements.reduce(0, combine: +)))
     }
     
     func testSquaringOnNone() {
@@ -98,11 +98,11 @@ class AlgebraicCircumscriptionsTests: XCTestCase {
     
     func testNormalization() {
         var vec1: ACVector = ACVector([3, 4, 5])
-        var mag = vec1.magnitude
         vec1.normalize()
-        
-        XCTAssert((vec1 * mag) == ACVector([3, 4, 5]))
-        println("\(vec1[0]) \(vec1[1]) \(vec1[2])")
+
+        println("vec \(vec1[0]) \(vec1[1]) \(vec1[2]) mag \(vec1.magnitude - 1))")
+
+        XCTAssert(Float(vec1.magnitude) == 1)
     }
     
     

@@ -30,17 +30,51 @@ class MatrixTests: XCTestCase {
         let colsM1T = matrix1.columns!;
         
         for i in 0..<matrix1.rows!.count {
-            if (rowsM1[i] != colsM1T[i] && colsM1[i] != rowsM1T[i]){
+            if (rowsM1[i] != colsM1T[i] || colsM1[i] != rowsM1T[i]){
                 XCTAssert(false, "not equal")
             }
         }
         XCTAssert(true)
     }
     
+    func testMatrixEquality() {
+        let mat1 = ACMatrix([[10, -10, 20], [90, 100, 30]]);
+        let mat2 = mat1
+        for i in 0..<mat1.rows!.count {
+            for j in 0..<mat1.columns!.count {
+                if mat1[i][j] != mat2[i][j] {
+                    XCTAssert(false, "\(mat1) not equal to \(mat2)!");
+                }
+            }
+        }
+        XCTAssert(true, "matrices are equal")
+    }
+    
+    func testMatrixInequality() {
+        let mat1 = ACMatrix([[10, 20]])
+        let mat2 = ACMatrix([[10], [20]])
+        let mat3 = ACMatrix([[10, 10, 20], [20, 10, 10]])
+        let mat4 = ACMatrix([[11, 10, 20], [20, 10, 11]])
+        let matArr = [mat1, mat2, mat3, mat4]
+        for (idx, i) in enumerate(matArr) {
+            for (idx2, j) in enumerate(matArr) {
+                if i == j && idx != idx2{
+                    XCTAssert(false, "all matrices should be unequal!, failed with \(i) and \(j)")
+                }
+            }
+        }
+        XCTAssert(true, "all unequal matrices represented as such")
+    }
+    
     func testMatrixAddition() {
-        var matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
-        var matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
-        println(matrix + matrix1)
+        let matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+        let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+        var vecArray = [ACVector]();
+        for (idx, vecOfMat) in enumerate(matrix.rows!) {
+            vecArray.append(matrix1.rows![idx] + vecOfMat)
+        }
+        XCTAssert(ACMatrix(vecArray) == matrix + matrix1, "alert")
+
     }
     
     func testMatrixVectorMultiplication() {

@@ -8,6 +8,11 @@
 
 import Foundation
 
+public struct Size {
+    var m: Int! = 0
+    var n: Int! = 0
+}
+
 public class ACMatrix : Euclidean, Printable {
     
     private var elements: [[Double]]? = [[Double]]()
@@ -15,10 +20,7 @@ public class ACMatrix : Euclidean, Printable {
     public var rows: [ACVector]? = [ACVector]()
     public var columns: [ACVector]? = [ACVector]()
     
-    public struct Size {
-        var m: Int! = 0
-        var n: Int! = 0
-    }
+
     
     public var size: Size = Size()
 
@@ -31,7 +33,6 @@ public class ACMatrix : Euclidean, Printable {
     public init(_ elements: [[Double]]) {
         //row-wise
         self.elements = elements
-        self.size = Size(m: elements.count, n: elements.first?.count)
         updateRowsAndColumnsRepresentation()
     }
     
@@ -54,6 +55,8 @@ public class ACMatrix : Euclidean, Printable {
                 self.columns![j][i] = self.rows![i][j]
             }
         }
+        self.size = Size(m: rows!.count, n: columns!.count)
+
     }
     
     public func transpose() {
@@ -72,7 +75,7 @@ public class ACMatrix : Euclidean, Printable {
     }
 }
 
-public func +(left: ACMatrix, right: ACMatrix) -> ACMatrix! {
+public func +(left: ACMatrix, right: ACMatrix) -> ACMatrix {
     assert(left.rows!.count == right.rows!.count && left.columns!.count == right.columns!.count, "Summed matricies must have equal sizes. \n\(left) \nunequal to\n\(right)")
     var rowVecs = [ACVector]()
     for i in 0..<left.rows!.count {
@@ -100,4 +103,30 @@ public func *(right: ACMatrix, left: ACVector) -> ACVector {
         vec[i] = right.rows![i] * left
     }
     return vec
+}
+
+public func ==(right: ACMatrix, left: ACMatrix) -> Bool {
+    
+    if right.size != left.size {
+        return false
+    }
+    
+    for (idx, rightRowVec) in enumerate(right.rows!) {
+        if (rightRowVec != left.rows![idx]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+public func != (right: ACMatrix, left: ACMatrix) -> Bool {
+    return !(right == left)
+}
+
+public func ==(right: Size, left: Size) -> Bool {
+    return right.m == left.m && right.n == left.n
+}
+
+public func != (right: Size, left: Size) -> Bool {
+    return !(right == left)
 }

@@ -66,6 +66,26 @@ class MatrixTests: XCTestCase {
         XCTAssert(true, "all unequal matrices represented as such")
     }
     
+    func testMatrixSizeEqual() {
+        let matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+        XCTAssert(matrix.size.m == matrix.size.n)
+    }
+    
+    func testMatrixSizeUnequal() {
+        let matrix = ACMatrix([[1, 2, 3, 4], [1, 2, 3, 4]])
+        let matSize = matrix.size
+        matrix.transpose()
+        let matTSize = matrix.size
+        XCTAssert(matSize.m == matTSize.n && matSize.n == matTSize.m, "transposed dimensions of \(matrix) should be reversely equal!")
+    }
+    
+    func testMatrixSubscript() {
+        let firstVal = 1 as Double
+        let secondVal = 2 as Double
+        let matrix = ACMatrix([[firstVal, 2, 3, 4], [1, secondVal, 3, 4]])
+        XCTAssert(matrix[0][0] == firstVal && matrix[1][1] == secondVal)
+    }
+    
     func testMatrixAddition() {
         let matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
         let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
@@ -82,4 +102,5 @@ class MatrixTests: XCTestCase {
         var vector = ACVector([5, 1, 5])
         println(matrix * vector)
     }
+    
 }

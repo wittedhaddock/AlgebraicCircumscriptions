@@ -129,3 +129,77 @@ true
 ```
 
 These are some of the possible vector computations. There also exists vector-scalar mutliplication and division, and vector-vector substraction. 
+
+### Matrix Basics
+
+The matrix functions analogously to the Vector. 
+
+Matrices can be instantiated by supplying a tuple containing number of rows columns, an array of PVectors, and arrays of arrays of elements (of type Double).
+
+```swift
+let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+println(matrix1)
+[1.0, 2.0, 3.0]
+[2.0, 3.0, 4.0]
+[5.0, 6.0, 7.0]
+
+let matrix2 = ACMatrix((4, 9))
+println(matrix2)
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+```
+
+ACMatrix instances can be indexed through subscripting
+
+```swift
+let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+let middleRowVector = matrix1[1] //ACVector([2, 3, 4])
+println(middleRowVector)
+[2.0, 3.0, 4.0]
+
+let middleValue = matrix[1][1]
+println(middleValue)
+3.0
+```
+
+Matrices can be transposed (element at position i,j becomes element at position j, i)
+
+```swift
+let matrix1 = ACMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+println(matrix1)
+[1.0, 2.0, 3.0]
+[4.0, 5.0, 6.0]
+[7.0, 8.0, 9.0]
+
+matrix1.transpose()
+println(matrix1)
+[1.0, 4.0, 7.0]
+[2.0, 5.0, 8.0]
+[3.0, 6.0, 9.0]
+```
+
+#### Matrix Operators
+
+Similar to ACVector, ACMatrix overloads the standard math/logic operators.
+
+###### Matrix-Matrix Addition
+
+```swift 
+let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+let matrix2 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+println(matrix1 + matrix2)
+[2.0, 4.0, 6.0]
+[4.0, 6.0, 8.0]
+[10.0, 12.0, 14.0]
+```
+
+##### Matrix-Vector Multiplication (not communicative) 
+```swift
+var matrix = ACMatrix([[2, -1, 5], [1, 3, 1]])
+var vector = ACVector([5, 1, 5])
+println(matrix * vector)
+[34.0, 13.0]
+
+println(vector * matrix)

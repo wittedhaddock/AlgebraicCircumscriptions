@@ -195,11 +195,75 @@ println(matrix1 + matrix2)
 [10.0, 12.0, 14.0]
 ```
 
-##### Matrix-Vector Multiplication (not communicative) 
+###### Matrix-Vector & Vector-Matrix Multiplication (col by row & row by col) (not communicative) 
+For col * row, number of entries in column (# rows) must equal number of entries in row (# cols) 
+For row * col, number of entries in row (# cols) must equal number of entries in col (# rows), and they should both be 1
 ```swift
-var matrix = ACMatrix([[2, -1, 5], [1, 3, 1]])
+var matrix = ACMatrix([[2], [-1], [5]])
 var vector = ACVector([5, 1, 5])
+
 println(matrix * vector)
-[34.0, 13.0]
+[10.0, 2.0, 10.0]
+[-5.0, -1.0, -5.0]
+[25.0, 5.0, 25.0]
 
 println(vector * matrix)
+[34.0]
+```
+###### Matrix-Matrix Multiplication (not communicative)
+
+Like Matrix-Vector multiplication, the matrix on the left must have the same number of columns as the multiplying matrix on the right has rows.
+
+```swift
+var mat = ACMatrix([[1, 2, 3], [2, 3, 4]])
+var mat2 = ACMatrix([[1, 2], [2, 3], [3, 4]])
+
+println(mat * mat2)
+[14.0, 20.0]
+[20.0, 29.0]
+
+println(mat2 * mat)
+
+[5.0, 8.0, 11.0]
+[8.0, 13.0, 18.0]
+[11.0, 18.0, 25.0]
+
+```
+
+#### Matrix dimension, echelon form, and Gaussian elimination
+
+The dimension of a matrix involves more considerations than that of a vector. The dimension of the matrix is the number of "pivot" columns remaining after a matrix receives gaussian elimination (or rank). When the "pivots" are "visible" in the matrix, the flag `echelonForm` of ACMatrix evaluates to true. 
+
+To perform elimination on a matrix (putting it into echelon form),  invoke `eliminate()`
+
+```swift
+let matrix = ACMatrix([[40, 50, 60, -200, 101],
+                       [39, 50, 60, -200, 101],
+                       [1, 3, 9, 10, 11],
+                       [90, 10, -30, 33, 34],
+                       [100, 1, -9, 3, 4]])
+        
+println(matrix)
+[40.0, 50.0, 60.0, -200.0, 101.0]
+[39.0, 50.0, 60.0, -200.0, 101.0]
+[1.0, 3.0, 9.0, 10.0, 11.0]
+[90.0, 10.0, -30.0, 33.0, 34.0]
+[100.0, 1.0, -9.0, 3.0, 4.0]
+
+matrix.eliminate()
+
+println(matrix)
+[40.0, 50.0, 60.0, -200.0, 101.0]
+[0.0, 1.25, 1.5, -5.0, 2.525]
+[0.0, 0.0, 5.4, 22.0, 4.94]
+[0.0, 0.0, 0.0, 244.111111111111, 52.2222222222226]
+[0.0, 0.0, 0.0, 0.0, 0.92371415566728]
+```
+As we can see, all has been eliminated below the diagonal, and the rank of this matrix is 5.
+It looks like it's in echelon form, too. 
+
+```swift
+println(matrix.echelonForm)
+true
+```
+

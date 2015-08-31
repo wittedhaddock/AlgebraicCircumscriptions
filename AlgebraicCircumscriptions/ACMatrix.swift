@@ -16,6 +16,7 @@ public struct Size {
 public class ACMatrix : Euclidean, Printable {
     
     private var elements: [[Double]]? = [[Double]]()
+    private var pivotColCount: Int = 1
     
     public var rows: [ACVector]? = [ACVector]()
     public var columns: [ACVector]? = [ACVector]()
@@ -26,8 +27,35 @@ public class ACMatrix : Euclidean, Printable {
     public var size: Size = Size()
 
     public var dimension: Int! {
+        //TODO: separate elimation, pivot col determination, and then dimension into class-based invocations
         get {
+            if !self.echelonForm {
+                self.eliminate()
+            }
+            if self.echelonForm {
+                return self.pivotColCount
+            }
             return 0
+        }
+    }
+    
+    public var echelonForm: Bool {
+        //TODO: optimization: search need not filter all elements
+        get {
+            for (idxr, row) in enumerate(self.rows!) {
+                if idxr < self.rows!.count - 1 && idxr < self.columns!.count - 1{
+                    if row[idxr] != 0 {
+                        for idxc in idxr + 1..<self.rows!.count {
+                            println(row[idxc])
+                            if self[idxc][idxr] != 0 {
+                                return false
+                            }
+                        }
+                        self.pivotColCount++
+                    }
+                }
+            }
+            return true
         }
     }
     

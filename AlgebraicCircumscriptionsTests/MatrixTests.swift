@@ -94,13 +94,27 @@ class MatrixTests: XCTestCase {
             vecArray.append(matrix1.rows![idx] + vecOfMat)
         }
         XCTAssert(ACMatrix(vecArray) == matrix + matrix1, "alert")
-
     }
+    
     func testEliminate(){
-        let matrix = ACMatrix([[1, 2, 3, 50, -2], [20, 3, -3, 4, 90], [4, 5, -10, 9, 100], [40, 50, 60, -200, 101]])
+        let matrix = ACMatrix([[40, 50, 60, -200, 101], [39, 50, 60, -200, 101]])
         println(matrix)
         matrix.eliminate()
         println(matrix);
+    }
+    
+    func testEchelonForm(){
+        let matrix = ACMatrix([[50, 50, 60, -200, 101], [39, 50, 60, -200, 101]])
+        let mat1Ech = matrix.echelonForm
+        matrix.eliminate()
+        let mat2Ech = matrix.echelonForm
+        XCTAssert(!mat1Ech && mat2Ech)
+    }
+    
+    func testMatrixDimension(){
+        let matrix = ACMatrix([[10, 20, 30]])
+        let matrix2 = ACMatrix ([[2, 3, 4], [7, 6, 13]])
+        XCTAssert(matrix.dimension == 1 && matrix2.dimension == 2)
     }
     
     func testMatrixVectorMultiplication() {

@@ -51,8 +51,81 @@ And since ACVector conforms to Printable, you can pass an entire vector for prin
 
 ```println(myVec) ``` prints ``` [1, 2, 3, 4] ```
 
-##### Computations
+##### Magnitudes & Normalizations
 
 The magnitude (distance) of a vector can be accessed by `magnitude` of ACVector
 
+```swift
+let vec = ACVector([3.0, 4.0])
+println(vec.magnitude)
+5.0
 
+let vec2 = ACVector([3.0, 4.0, 5.0])
+println(vec2.magnitude)
+7.07106781186548
+
+```
+
+The magnitude can also be set
+
+```swift
+let vec = ACVector([3.0, 4.0])
+vec.magnitude = 10
+println(vec)
+[6.0, 8.0]
+
+let vec2 = ACVector([3.0, 4.0, 5.0])
+vec2.magnitude = 1 // unit vector
+println(vec2)
+[0.424264068711929, 0.565685424949238, 0.707106781186547]
+
+```
+
+Unit vectors, vectors whose magnitudes are 1, can yield from calling `normalize()` on any vector
+```swift
+let vec = ACVector([3.0, 4.0])
+vec.normalize()
+println(vec)
+[0.6, 0.8]
+
+let vec2 = ACVector([3.0, 4.0, 5.0])
+vec2.normalize()
+println(vec2)
+[0.424264068711929, 0.565685424949238, 0.707106781186547] // same result as when mag was manually set to 1
+```
+
+#### Vector Operators
+
+Many regular arithmetic and geometric operators have been overloaded to support Vector operations. 
+
+Some examples:
+
+###### Vector-Vector Addition
+
+```Swift
+var vec1: ACVector = ACVector([1, 2, 3, 4, 5])
+var vec2 : ACVector = ACVector([1, 2, 3, 4, 5])
+println(vec1 + vec2)
+[2.0, 4.0, 6.0, 8.0, 10.0]
+```
+
+###### Vector-Vector Multiplication
+```Swift
+var vec1: ACVector = ACVector([30, 20, 10]);
+var vec2: ACVector = ACVector([15, 30, 45]);
+println(vec1 * vec2)
+1500.0
+```
+
+###### Equality
+```Swift 
+var vec1: ACVector = ACVector([30, 20, 10]);
+var vec2: ACVector = ACVector([15, 30, 45]);
+println(vec1 == vec2)
+false
+
+println(vec1 != vec2)
+true
+```
+
+These are some of the possible vector computations. There also exists vector-scalar mutliplication and division, and vector-vector substraction. 

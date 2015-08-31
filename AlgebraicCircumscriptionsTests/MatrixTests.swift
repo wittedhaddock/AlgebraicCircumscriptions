@@ -96,11 +96,25 @@ class MatrixTests: XCTestCase {
         XCTAssert(ACMatrix(vecArray) == matrix + matrix1, "alert")
 
     }
+    func testEliminate(){
+        let matrix = ACMatrix([[1, 2, 3, 50, -2], [20, 3, -3, 4, 90], [4, 5, -10, 9, 100], [40, 50, 60, -200, 101]])
+        println(matrix)
+        matrix.eliminate()
+        println(matrix);
+    }
     
     func testMatrixVectorMultiplication() {
         var matrix = ACMatrix([[2, -1, 5], [1, 3, 1]])
         var vector = ACVector([5, 1, 5])
         println(matrix * vector)
+    }
+    
+    func testMatrixMatrixMultiplication() {
+        var mat = ACMatrix([[1, 2, 3], [2, 3, 4]])
+        var mat2 = ACMatrix([[1, 2], [2, 3], [3, 4]])
+        let matMat2 = ACMatrix([[14, 20], [20, 29]])
+        let mat2Mat = ACMatrix([[5, 8, 11], [8, 13, 18], [11, 18, 25]])
+        XCTAssert(mat * mat2 == matMat2 && mat2 * mat == mat2Mat)
     }
     
 }

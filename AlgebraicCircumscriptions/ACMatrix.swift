@@ -9,8 +9,8 @@
 import Foundation
 
 public struct Size {
-    var m: Int! = 0
-    var n: Int! = 0
+    public var m: Int! = 0
+    public var n: Int! = 0
 }
 
 public class ACMatrix : Euclidean, Printable {
@@ -20,7 +20,8 @@ public class ACMatrix : Euclidean, Printable {
     public var rows: [ACVector]? = [ACVector]()
     public var columns: [ACVector]? = [ACVector]()
     
-
+//TODO: optimization and permututational testing of size/dimensionality for initializers -- remember to be wary of caches
+//Premature optimization is the root of all evil. - DK
     
     public var size: Size = Size()
 
@@ -36,9 +37,21 @@ public class ACMatrix : Euclidean, Printable {
         updateRowsAndColumnsRepresentation()
     }
     
+    public init(_ size: (Int, Int)) {
+        for i in 0..<size.0 {
+            self.rows?.append(ACVector(size.1))
+        }
+        updateElementRepresentation()
+    }
+    
     public init(_ rowVecs: [ACVector]) {
-        for i in 0..<rowVecs.count {
-            self.elements!.append(rowVecs[i].elementArray!)
+       populateElements(fromRows: rowVecs)
+    }
+    
+    private func populateElements(fromRows rows: [ACVector]) {
+        self.elements?.removeAll(keepCapacity: false)
+        for i in 0..<rows.count {
+            self.elements!.append(rows[i].elementArray!)
         }
         updateRowsAndColumnsRepresentation()
     }
@@ -56,13 +69,45 @@ public class ACMatrix : Euclidean, Printable {
             }
         }
         self.size = Size(m: rows!.count, n: columns!.count)
-
+    }
+    
+    private func updateElementRepresentation() {
+        populateElements(fromRows: self.rows!)
     }
     
     public func transpose() {
         let tempHolder = self.rows;
         self.rows = self.columns;
         self.columns = tempHolder
+        updateElementRepresentation()
+    }
+    
+    public func eliminate() {
+        //TODO: row exchanges
+        
+        /*
+        -- first we loop through cols, and then rows (starting with a row whose index is the current col)
+        then, we determine the factor of an element whose column is the same as the pivot's column, and we do this row by row 
+        In each row, we multiply the determined factor with every corresponding row's column entry (resulting in one less calculation each time), 
+        and subtract that from each corresponding column entry in the row greater the current (i + 1).
+        Assuming nonzero pivots, this element-wise operation makes zero the elements whose indices i or j are both less than j, j (the pivot diagonal)
+        While writing this algo, I referred to http://circumscribing.com/creating-zero-from-a-sequence-of-six/
+        
+        */
+        for j in 0..<self.columns!.count {
+            if j + 1 >= self.rows!.count {
+                break;
+            }
+            for i in j..<self.rows!.count {
+                let factor = self[i + 1][j] / self[j][j]
+                for k in j..<self.columns!.count {
+                    self[i + 1][k] -= factor * self[j][k]
+                }
+                if i + 1 >= self.rows!.count - 1 {
+                    break
+                }
+            }
+        }
     }
     
     public final subscript(index: Int) -> ACVector {
@@ -105,6 +150,7 @@ public func *(right: ACMatrix, left: ACVector) -> ACVector {
     return vec
 }
 
+infix operator == {precedence 130}
 public func ==(right: ACMatrix, left: ACMatrix) -> Bool {
     
     if right.size != left.size {
@@ -117,6 +163,16 @@ public func ==(right: ACMatrix, left: ACMatrix) -> Bool {
         }
     }
     return true;
+}
+
+public func *(left: ACMatrix, right: ACMatrix) -> ACMatrix {
+    var newMat = ACMatrix((left.size.m, right.size.n))
+    for (idxr, rowVec) in enumerate(left.rows!) {
+        for (idxc, colVec) in enumerate(right.columns!) {
+            newMat[idxr][idxc] = rowVec * colVec;
+        }
+    }
+    return newMat
 }
 
 public func != (right: ACMatrix, left: ACMatrix) -> Bool {

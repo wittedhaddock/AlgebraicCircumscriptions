@@ -22,7 +22,12 @@ class MatrixTests: XCTestCase {
     }
     
     func testColsAndRowsTransposeForSquareMatrix() {
-        var matrix1: ACMatrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+        var matrix1: ACMatrix = ACMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+        
+        println(matrix1)
+        matrix1.transpose()
+        println(matrix1)
+        
         let rowsM1 = matrix1.rows!;
         let colsM1 = matrix1.columns!;
         matrix1.transpose()
@@ -89,6 +94,8 @@ class MatrixTests: XCTestCase {
     func testMatrixAddition() {
         let matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
         let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
+        
+        println(matrix + matrix1)
         var vecArray = [ACVector]();
         for (idx, vecOfMat) in enumerate(matrix.rows!) {
             vecArray.append(matrix1.rows![idx] + vecOfMat)
@@ -97,18 +104,35 @@ class MatrixTests: XCTestCase {
     }
     
     func testEliminate(){
-        let matrix = ACMatrix([[40, 50, 60, -200, 101], [39, 50, 60, -200, 101]])
+        let matrix = ACMatrix([[40, 50, 60, -200, 101],
+                               [39, 50, 60, -200, 101],
+                               [1, 3, 9, 10, 11],
+                               [90, 10, -30, 33, 34],
+                               [100, 1, -9, 3, 4]])
+        
         println(matrix)
         matrix.eliminate()
-        println(matrix);
+        println(matrix)
     }
     
-    func testEchelonForm(){
+    func testEchelonForm() {
         let matrix = ACMatrix([[50, 50, 60, -200, 101], [39, 50, 60, -200, 101]])
         let mat1Ech = matrix.echelonForm
         matrix.eliminate()
         let mat2Ech = matrix.echelonForm
+        println(matrix.echelonForm)
+
         XCTAssert(!mat1Ech && mat2Ech)
+    }
+    
+    func testIdentityMatrix() {
+        let mat4ID = ACMatrix(identityOfDimension: 4)
+        for i in 0..<mat4ID.rows!.count {
+            if mat4ID[i][i] != 1 {
+                XCTAssert(false, "\(mat4ID) not an identity matrix")
+            }
+        }
+        XCTAssert(true)
     }
     
     func testMatrixDimension(){
@@ -118,14 +142,18 @@ class MatrixTests: XCTestCase {
     }
     
     func testMatrixVectorMultiplication() {
-        var matrix = ACMatrix([[2, -1, 5], [1, 3, 1]])
+        var matrix = ACMatrix([[2], [-1], [5]])
         var vector = ACVector([5, 1, 5])
         println(matrix * vector)
+        println(vector * matrix)
     }
     
     func testMatrixMatrixMultiplication() {
         var mat = ACMatrix([[1, 2, 3], [2, 3, 4]])
         var mat2 = ACMatrix([[1, 2], [2, 3], [3, 4]])
+        println(mat * mat2)
+        println("\n")
+        println(mat2 * mat)
         let matMat2 = ACMatrix([[14, 20], [20, 29]])
         let mat2Mat = ACMatrix([[5, 8, 11], [8, 13, 18], [11, 18, 25]])
         XCTAssert(mat * mat2 == matMat2 && mat2 * mat == mat2Mat)

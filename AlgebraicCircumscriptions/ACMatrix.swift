@@ -72,6 +72,15 @@ public class ACMatrix : Euclidean, Printable {
         updateElementRepresentation()
     }
     
+    public init(identityOfDimension dimension:  Int) {
+        assert(dimension >= 0, "dimension cannot be negative")
+        for i in 0..<dimension {
+            var rowVec = ACVector(dimension)
+            rowVec[i] = 1
+            self.rows?.append(rowVec)
+        }
+    }
+    
     public init(_ rowVecs: [ACVector]) {
        populateElements(fromRows: rowVecs)
     }
@@ -169,13 +178,23 @@ public func *(right: Double, left: ACMatrix) -> ACMatrix {
     return left * right
 }
 
-public func *(right: ACMatrix, left: ACVector) -> ACVector {
-    assert(right.columns!.count == left.dimension, "matrix-vector multiplication must be dimensionally correct")
-    var vec = ACVector(right.rows!.count)
-    for i in 0..<right.rows!.count {
-        vec[i] = right.rows![i] * left
+//column * row = m * m size
+public func *(left: ACMatrix, right: ACVector) -> ACMatrix {
+    assert(left.columns!.count == 1, "matrix-vector multiplication must be dimensionally correct")
+    var mat = ACMatrix((left.rows!.count, right.dimension))
+    for (i, rowVec) in enumerate(left.rows!) {
+        for (j, colElement) in enumerate(right.elementArray!) {
+            mat[i][j] = rowVec[0] * colElement
+        }
     }
-    return vec
+    return mat
+}
+
+//row * column = 1 * 1 size
+public func *(left: ACVector, right: ACMatrix) -> ACVector {
+    assert(right.columns!.count == 1, "vector-matrix multiplication must be dimensionally correct")
+    
+    return ACVector([left * right.columns!.first!])
 }
 
 infix operator == {precedence 130}

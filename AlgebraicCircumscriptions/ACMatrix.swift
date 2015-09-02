@@ -79,6 +79,7 @@ public class ACMatrix : Euclidean, Printable {
             rowVec[i] = 1
             self.rows?.append(rowVec)
         }
+        updateElementRepresentation()
     }
     
     public init(_ rowVecs: [ACVector]) {
@@ -120,27 +121,31 @@ public class ACMatrix : Euclidean, Printable {
     }
     
     public func eliminate() {
+        ACMatrix.eliminate(self)
+    }
+    
+    public class func eliminate(matrix: ACMatrix)  {
         //TODO: row exchanges
         
         /*
         -- first we loop through cols, and then rows (starting with a row whose index is the current col)
-        then, we determine the factor of an element whose column is the same as the pivot's column, and we do this row by row 
-        In each row, we multiply the determined factor with every corresponding row's column entry (resulting in one less calculation each time), 
+        then, we determine the factor of an element whose column is the same as the pivot's column, and we do this row by row
+        In each row, we multiply the determined factor with every corresponding row's column entry (resulting in one less calculation each time),
         and subtract that from each corresponding column entry in the row greater the current (i + 1).
         Assuming nonzero pivots, this element-wise operation makes zero the elements whose indices i or j are both less than j, j (the pivot diagonal)
         While writing this algo, I referred to http://circumscribing.com/creating-zero-from-a-sequence-of-six/
         
         */
-        for j in 0..<self.columns!.count {
-            if j + 1 >= self.rows!.count {
+        for j in 0..<matrix.columns!.count {
+            if j + 1 >= matrix.rows!.count {
                 break;
             }
-            for i in j..<self.rows!.count {
-                let factor = self[i + 1][j] / self[j][j]
-                for k in j..<self.columns!.count {
-                    self[i + 1][k] -= factor * self[j][k]
+            for i in j..<matrix.rows!.count {
+                let factor = matrix[i + 1][j] / matrix[j][j]
+                for k in j..<matrix.columns!.count {
+                    matrix[i + 1][k] -= factor * matrix[j][k]
                 }
-                if i + 1 >= self.rows!.count - 1 {
+                if i + 1 >= matrix.rows!.count - 1 {
                     break
                 }
             }

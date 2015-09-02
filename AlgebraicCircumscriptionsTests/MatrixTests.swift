@@ -23,11 +23,7 @@ class MatrixTests: XCTestCase {
     
     func testColsAndRowsTransposeForSquareMatrix() {
         var matrix1: ACMatrix = ACMatrix([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
-        
-        println(matrix1)
         matrix1.transpose()
-        println(matrix1)
-        
         let rowsM1 = matrix1.rows!;
         let colsM1 = matrix1.columns!;
         matrix1.transpose()
@@ -94,8 +90,6 @@ class MatrixTests: XCTestCase {
     func testMatrixAddition() {
         let matrix = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
         let matrix1 = ACMatrix([[1, 2, 3], [2, 3, 4], [5, 6, 7]])
-        
-        println(matrix + matrix1)
         var vecArray = [ACVector]();
         for (idx, vecOfMat) in enumerate(matrix.rows!) {
             vecArray.append(matrix1.rows![idx] + vecOfMat)
@@ -104,6 +98,7 @@ class MatrixTests: XCTestCase {
     }
     
     func testEliminate(){
+        //TODO
         let matrix = ACMatrix([[40, 50, 60, -200, 101],
                                [39, 50, 60, -200, 101],
                                [1, 3, 9, 10, 11],
@@ -120,9 +115,9 @@ class MatrixTests: XCTestCase {
         let mat1Ech = matrix.echelonForm
         matrix.eliminate()
         let mat2Ech = matrix.echelonForm
-        println(matrix.echelonForm)
-
-        XCTAssert(!mat1Ech && mat2Ech)
+        let matrix2 = ACMatrix([[10, 10, 10], [20, 10, 20]])
+        ACMatrix.eliminate(matrix2)
+        XCTAssert(!mat1Ech && mat2Ech && matrix2.echelonForm)
     }
     
     func testIdentityMatrix() {

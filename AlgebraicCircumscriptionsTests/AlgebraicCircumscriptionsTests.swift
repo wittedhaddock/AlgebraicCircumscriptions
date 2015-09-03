@@ -34,6 +34,13 @@ class AlgebraicCircumscriptionsTests: XCTestCase {
         XCTAssert(vec[0] == firstElement && vec[2] == thirdElement)
     }
     
+    func testVectorMagnitude() {
+        let vec = ACVector([3.0, 4.0, 5.0])
+        vec.normalize()
+        println(vec)
+        
+    }
+    
     func testVectorDimensionality() {
         var components = [5.5, M_PI, 2, 10, -10]
         var vec :ACVector = ACVector(components)
@@ -64,6 +71,7 @@ class AlgebraicCircumscriptionsTests: XCTestCase {
     func testVectorAddition() {
         var vec1: ACVector = ACVector([1, 2, 3, 4, 5])
         var vec2 : ACVector = ACVector([1, 2, 3, 4, 5])
+        println(vec1 + vec2)
         var vec3 = ACVector(vec1.dimension)
         
         let vecSum : ACVector = (vec1 + vec2)!
@@ -78,6 +86,7 @@ class AlgebraicCircumscriptionsTests: XCTestCase {
     func testDotProduct() {
         var vec1: ACVector = ACVector([30, 20, 10]);
         var vec2: ACVector = ACVector([15, 30, 45]);
+        println(vec1 * vec2)
         var cumsum: Double = 0
         for i in 0..<vec1.dimension {
             cumsum += vec1[i] * vec2[i] as Double

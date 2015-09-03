@@ -15,10 +15,16 @@ public struct Size {
 
 public class ACMatrix : Euclidean, Printable {
     
-    private var elements: [[Double]]? = [[Double]]()
     private var pivotColCount: Int = 1
     
-    public var rows: [ACVector]? = [ACVector]()
+    public var rows: [ACVector]?  = [ACVector]() {
+        didSet {
+            //TODO: optimize & consider rows & cols cols
+            println("set!")
+            updateColumnRepresentation()
+        }
+    }
+    
     public var columns: [ACVector]? = [ACVector]()
     
 //TODO: optimization and permututational testing of size/dimensionality for initializers -- remember to be wary of caches
@@ -42,12 +48,14 @@ public class ACMatrix : Euclidean, Printable {
     public var echelonForm: Bool {
         //TODO: optimization: search need not filter all elements
         get {
+            self.pivotColCount = 1
             for (idxr, row) in enumerate(self.rows!) {
                 if idxr < self.rows!.count - 1 && idxr < self.columns!.count - 1{
                     if row[idxr] != 0 {
                         for idxc in idxr + 1..<self.rows!.count {
                             println(row[idxc])
                             if self[idxc][idxr] != 0 {
+                                self.pivotColCount = 1
                                 return false
                             }
                         }
@@ -59,69 +67,69 @@ public class ACMatrix : Euclidean, Printable {
         }
     }
     
-    public init(_ elements: [[Double]]) {
-        //row-wise
-        self.elements = elements
-        updateRowsAndColumnsRepresentation()
-    }
-    
-    public init(_ size: (Int, Int)) {
-        for i in 0..<size.0 {
-            self.rows?.append(ACVector(size.1))
-        }
-        updateElementRepresentation()
-    }
-    
-    public init(identityOfDimension dimension:  Int) {
-        assert(dimension >= 0, "dimension cannot be negative")
-        for i in 0..<dimension {
-            var rowVec = ACVector(dimension)
-            rowVec[i] = 1
-            self.rows?.append(rowVec)
-        }
-        updateElementRepresentation()
-    }
-    
     public init(_ rowVecs: [ACVector]) {
-       populateElements(fromRows: rowVecs)
+        self.rows = rowVecs
+        updateColumnRepresentation()
     }
     
-    private func populateElements(fromRows rows: [ACVector]) {
-        self.elements?.removeAll(keepCapacity: false)
-        for i in 0..<rows.count {
-            self.elements!.append(rows[i].elementArray!)
-        }
-        updateRowsAndColumnsRepresentation()
+    public convenience init(_ elements: [[Double]]) {
+        //row-wise
+        self.init(ACMatrix.vectorArray(from2DElementArray: elements))
     }
     
-    private func updateRowsAndColumnsRepresentation() {
-        self.rows = Array(count: self.elements!.count, repeatedValue: ACVector())
-        self.columns = Array(count: self.elements!.first!.count, repeatedValue: ACVector(self.elements!.count))
-        for i in 0..<self.columns!.count {
-            self.columns![i] = ACVector(self.elements!.count); // seems as if Array's count:repeatedValue: passes same repeated value reference
+    public convenience init(zeroMatrixOfSize size: Size) {
+        var vecs = [ACVector]()
+        for i in 0..<size.m {
+            vecs.append(ACVector(size.n))
         }
-        for i in 0..<self.elements!.count {
-            self.rows![i] = ACVector(self.elements![i])
-            for j in 0..<self.elements![i].count {
-                self.columns![j][i] = self.rows![i][j]
-            }
-        }
-        self.size = Size(m: rows!.count, n: columns!.count)
+        self.init(vecs)
+        
     }
     
-    private func updateElementRepresentation() {
-        populateElements(fromRows: self.rows!)
+    public convenience init(identityOfDimension dimension:  Int) {
+        assert(dimension >= 0, "dimension cannot be negative")
+        var vecs = [ACVector]()
+        for i in 0..<dimension {
+            var vec = ACVector(dimension)
+            vec[i] = 1
+            vecs.append(vec)
+        }
+        self.init(vecs)
+        self.pivotColCount = dimension
+
     }
     
     public func transpose() {
-        let tempHolder = self.rows;
         self.rows = self.columns;
-        self.columns = tempHolder
-        updateElementRepresentation()
     }
     
     public func eliminate() {
         ACMatrix.eliminate(self)
+    }
+    
+    private class func vectorArray (from2DElementArray elementArray2D: [[Double]]) -> [ACVector] {
+        var vectorArray = [ACVector]()
+        for vecElements in elementArray2D {
+            vectorArray.append(ACVector(vecElements))
+        }
+        return vectorArray
+    }
+    
+    private func updateColumnRepresentation() {
+        if self.rows?.count > 0 {
+            self.columns = Array(count: self.rows!.first!.dimension, repeatedValue: ACVector())
+            for i in 0..<self.rows!.first!.dimension {
+                self.columns![i] = ACVector(self.rows!.count) //because repeatedValue passed by reference
+                for j in 0..<self.rows!.count {
+                    self.columns![i][j] = self.rows![j][i]
+                }
+            }
+        }
+        else {
+            self.columns = [ACVector]()
+        }
+        self.size = Size(m: self.rows!.count, n: self.columns!.count)
+        
     }
     
     public class func eliminate(matrix: ACMatrix)  {
@@ -136,6 +144,7 @@ public class ACMatrix : Euclidean, Printable {
         While writing this algo, I referred to http://circumscribing.com/creating-zero-from-a-sequence-of-six/
         
         */
+        let id = ACMatrix(identityOfDimension: matrix.rows!.count)
         for j in 0..<matrix.columns!.count {
             if j + 1 >= matrix.rows!.count {
                 break;
@@ -144,12 +153,14 @@ public class ACMatrix : Euclidean, Printable {
                 let factor = matrix[i + 1][j] / matrix[j][j]
                 for k in j..<matrix.columns!.count {
                     matrix[i + 1][k] -= factor * matrix[j][k]
+                    id[i + 1][k] -= factor * matrix[j][k]
                 }
                 if i + 1 >= matrix.rows!.count - 1 {
                     break
                 }
             }
         }
+        println(id)
     }
     
     public final subscript(index: Int) -> ACVector {
@@ -186,7 +197,7 @@ public func *(right: Double, left: ACMatrix) -> ACMatrix {
 //column * row = m * m size
 public func *(left: ACMatrix, right: ACVector) -> ACMatrix {
     assert(left.columns!.count == 1, "matrix-vector multiplication must be dimensionally correct")
-    var mat = ACMatrix((left.rows!.count, right.dimension))
+    var mat = ACMatrix(zeroMatrixOfSize: Size(m:left.rows!.count, n: right.dimension))
     for (i, rowVec) in enumerate(left.rows!) {
         for (j, colElement) in enumerate(right.elementArray!) {
             mat[i][j] = rowVec[0] * colElement
@@ -218,7 +229,7 @@ public func ==(right: ACMatrix, left: ACMatrix) -> Bool {
 }
 
 public func *(left: ACMatrix, right: ACMatrix) -> ACMatrix {
-    var newMat = ACMatrix((left.size.m, right.size.n))
+    var newMat = ACMatrix(zeroMatrixOfSize: Size(m: left.size.m, n: right.size.n))
     for (idxr, rowVec) in enumerate(left.rows!) {
         for (idxc, colVec) in enumerate(right.columns!) {
             newMat[idxr][idxc] = rowVec * colVec;

@@ -98,16 +98,15 @@ class MatrixTests: XCTestCase {
     }
     
     func testEliminate(){
-        //TODO
+        //TODO 
+        //WARNING: elimination not persisting elements to cols & rows props
         let matrix = ACMatrix([[40, 50, 60, -200, 101],
                                [39, 50, 60, -200, 101],
                                [1, 3, 9, 10, 11],
                                [90, 10, -30, 33, 34],
                                [100, 1, -9, 3, 4]])
         
-        println(matrix)
-        matrix.eliminate()
-        println(matrix)
+
     }
     
     func testEchelonForm() {
@@ -122,12 +121,14 @@ class MatrixTests: XCTestCase {
     
     func testIdentityMatrix() {
         let mat4ID = ACMatrix(identityOfDimension: 4)
+        
         for i in 0..<mat4ID.rows!.count {
             if mat4ID[i][i] != 1 {
                 XCTAssert(false, "\(mat4ID) not an identity matrix")
             }
         }
-        XCTAssert(true)
+        
+        XCTAssert(true && mat4ID.dimension == mat4ID.rows!.count)
     }
     
     func testMatrixDimension(){

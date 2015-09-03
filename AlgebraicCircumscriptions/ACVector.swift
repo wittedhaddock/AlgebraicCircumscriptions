@@ -118,7 +118,9 @@ public func /(left: ACVector, right: Double) -> ACVector! {
 }
 
 public func ==(left: ACVector, right: ACVector) -> Bool {
-    assert(left.dimension == right.dimension, "dimension of \(left) unequal to \(right)")
+    if left.dimension! != right.dimension! {
+        return false
+    }
     for i in 0..<left.dimension {
         if left[i] != right[i] {
             return false

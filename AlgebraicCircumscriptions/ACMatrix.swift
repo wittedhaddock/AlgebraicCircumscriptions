@@ -13,19 +13,29 @@ public struct Size {
     public var n: Int! = 0
 }
 
-public class ACMatrix : Euclidean, Printable {
+public class ACMatrix : Euclidean, Printable, VectorDataSource {
     
+    private var needsColumnUpdate = false
     private var pivotColCount: Int = 1
     
     public var rows: [ACVector]?  = [ACVector]() {
         didSet {
             //TODO: optimize & consider rows & cols cols
             println("set!")
+            rows!.map { ($0 as ACVector).dataSource = self }
             updateColumnRepresentation()
         }
     }
     
-    public var columns: [ACVector]? = [ACVector]()
+    private var cols: [ACVector]? = [ACVector]()
+    public var columns: [ACVector]?  {
+        get {
+            if self.needsColumnUpdate {
+                self.updateColumnRepresentation()
+            }
+            return cols
+        }
+    }
     
 //TODO: optimization and permututational testing of size/dimensionality for initializers -- remember to be wary of caches
 //Premature optimization is the root of all evil. - DK
@@ -69,6 +79,7 @@ public class ACMatrix : Euclidean, Printable {
     
     public init(_ rowVecs: [ACVector]) {
         self.rows = rowVecs
+        self.rows!.map { ($0 as ACVector).dataSource = self }
         updateColumnRepresentation()
     }
     
@@ -103,8 +114,17 @@ public class ACMatrix : Euclidean, Printable {
         self.rows = self.columns;
     }
     
-    public func eliminate() {
-        ACMatrix.eliminate(self)
+    public func invert(){
+        self.eliminate()
+        self.transpose()
+        self.eliminate()
+    }
+    
+    public func eliminate() -> ACMatrix? {
+        let e = ACMatrix.eliminateAndGetTransformedIdentity(self)
+        self.needsColumnUpdate = true
+        return e
+        
     }
     
     private class func vectorArray (from2DElementArray elementArray2D: [[Double]]) -> [ACVector] {
@@ -115,24 +135,29 @@ public class ACMatrix : Euclidean, Printable {
         return vectorArray
     }
     
+    public func elementValueChanged(#sender: ACVector, indexOfChange index: Int, newElementValue val: Double) {
+        println("vector \(sender) changed value at index \(index) to \(val)")
+        self.needsColumnUpdate = true
+    }
+    
     private func updateColumnRepresentation() {
+        self.needsColumnUpdate = false
         if self.rows?.count > 0 {
-            self.columns = Array(count: self.rows!.first!.dimension, repeatedValue: ACVector())
+            self.cols = Array(count: self.rows!.first!.dimension, repeatedValue: ACVector())
             for i in 0..<self.rows!.first!.dimension {
-                self.columns![i] = ACVector(self.rows!.count) //because repeatedValue passed by reference
+                self.cols![i] = ACVector(self.rows!.count) //because repeatedValue passed by reference
                 for j in 0..<self.rows!.count {
-                    self.columns![i][j] = self.rows![j][i]
+                    self.cols![i][j] = self.rows![j][i]
                 }
             }
         }
         else {
-            self.columns = [ACVector]()
+            self.cols = [ACVector]()
         }
         self.size = Size(m: self.rows!.count, n: self.columns!.count)
-        
     }
     
-    public class func eliminate(matrix: ACMatrix)  {
+    public class func eliminateAndGetTransformedIdentity(matrix: ACMatrix) -> ACMatrix {
         //TODO: row exchanges
         
         /*
@@ -144,7 +169,7 @@ public class ACMatrix : Euclidean, Printable {
         While writing this algo, I referred to http://circumscribing.com/creating-zero-from-a-sequence-of-six/
         
         */
-        let id = ACMatrix(identityOfDimension: matrix.rows!.count)
+        let id = ACMatrix(identityOfDimension: matrix.columns!.count)
         for j in 0..<matrix.columns!.count {
             if j + 1 >= matrix.rows!.count {
                 break;
@@ -160,7 +185,8 @@ public class ACMatrix : Euclidean, Printable {
                 }
             }
         }
-        println(id)
+         //using row array to satisfy didSet of rows in ACMatrix implementation
+    return id
     }
     
     public final subscript(index: Int) -> ACVector {

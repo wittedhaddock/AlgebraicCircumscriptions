@@ -8,8 +8,14 @@
 
 import Foundation
 
+public protocol VectorDataSource {
+    func elementValueChanged(#sender:ACVector, indexOfChange index:Int, newElementValue val: Double)
+}
+
 public class ACVector: Euclidean, Printable {
     private var elements: [Double]? = [Double]()
+    
+    public var dataSource: VectorDataSource?
     
     public var elementArray: [Double]? {
         get {
@@ -69,6 +75,7 @@ public class ACVector: Euclidean, Printable {
         }
         
         set(newValue){
+            self.dataSource?.elementValueChanged(sender: self, indexOfChange: index, newElementValue: newValue)
             self.elements![index] = newValue
         }
     }

@@ -100,12 +100,13 @@ class MatrixTests: XCTestCase {
     func testEliminate(){
         //TODO 
         //WARNING: elimination not persisting elements to cols & rows props
-        let matrix = ACMatrix([[40, 50, 60, -200, 101],
+        var matrix = ACMatrix([[40, 50, 60, -200, 101],
                                [39, 50, 60, -200, 101],
                                [1, 3, 9, 10, 11],
                                [90, 10, -30, 33, 34],
                                [100, 1, -9, 3, 4]])
         
+        let mat = matrix.eliminate()
 
     }
     
@@ -115,7 +116,7 @@ class MatrixTests: XCTestCase {
         matrix.eliminate()
         let mat2Ech = matrix.echelonForm
         let matrix2 = ACMatrix([[10, 10, 10], [20, 10, 20]])
-        ACMatrix.eliminate(matrix2)
+        let id = ACMatrix.eliminate(matrix2)
         XCTAssert(!mat1Ech && mat2Ech && matrix2.echelonForm)
     }
     

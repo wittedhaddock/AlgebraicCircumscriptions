@@ -107,7 +107,6 @@ class MatrixTests: XCTestCase {
                                [100, 1, -9, 3, 4]])
         
         let mat = matrix.eliminate()
-
     }
     
     func testEchelonForm() {
@@ -115,8 +114,8 @@ class MatrixTests: XCTestCase {
         let mat1Ech = matrix.echelonForm
         matrix.eliminate()
         let mat2Ech = matrix.echelonForm
-        let matrix2 = ACMatrix([[10, 10, 10], [20, 10, 20]])
-        let id = ACMatrix.eliminate(matrix2)
+        var matrix2 = ACMatrix([[10, 10, 10], [20, 10, 20]])
+        let id = ACMatrix.eliminateAndGetTransformedIdentity(matrix2)
         XCTAssert(!mat1Ech && mat2Ech && matrix2.echelonForm)
     }
     

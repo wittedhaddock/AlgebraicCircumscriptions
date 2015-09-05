@@ -171,18 +171,18 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         */
         let id = ACMatrix(identityOfDimension: matrix.columns!.count)
         for j in 0..<matrix.columns!.count {
-            if j + 1 >= matrix.rows!.count {
-                break;
-            }
             for i in j..<matrix.rows!.count {
                 let factor = matrix[i + 1][j] / matrix[j][j]
-                id[i + 1][j] = factor
+                id[i + 1][j] = -factor
                 for k in j..<matrix.columns!.count {
                     matrix[i + 1][k] -= factor * matrix[j][k]
                 }
                 if i + 1 >= matrix.rows!.count - 1 {
                     break
                 }
+            }
+            if j + 1 >= matrix.rows!.count - 1 {
+                break;
             }
         }
          //using row array to satisfy didSet of rows in ACMatrix implementation

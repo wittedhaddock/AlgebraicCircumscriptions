@@ -176,9 +176,9 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
             }
             for i in j..<matrix.rows!.count {
                 let factor = matrix[i + 1][j] / matrix[j][j]
+                id[i + 1][j] = factor
                 for k in j..<matrix.columns!.count {
                     matrix[i + 1][k] -= factor * matrix[j][k]
-                    id[i + 1][k] -= factor * matrix[j][k]
                 }
                 if i + 1 >= matrix.rows!.count - 1 {
                     break

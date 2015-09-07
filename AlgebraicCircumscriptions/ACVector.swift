@@ -68,6 +68,10 @@ public class ACVector: Euclidean, Printable {
     }
     public init() {}
     
+    public func copy() -> ACVector {
+        return ACVector(self.elements!)
+    }
+    
     // change double to dynamic type of elements
     final public subscript(index: Int) -> Double {
         get {

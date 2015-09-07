@@ -119,6 +119,14 @@ class MatrixTests: XCTestCase {
         XCTAssert(!mat1Ech && mat2Ech && matrix2.echelonForm)
     }
     
+    func testInvertibility() {
+        let matrix = ACMatrix([[2, -1, 0], [-1, 2, -1], [0, -1, 2]])
+    
+        matrix.invert()
+        
+        
+    }
+    
     func testIdentityMatrix() {
         let mat4ID = ACMatrix(identityOfDimension: 4)
         

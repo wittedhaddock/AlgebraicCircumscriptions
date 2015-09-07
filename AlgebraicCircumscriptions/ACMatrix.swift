@@ -23,6 +23,7 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
             //TODO: optimize & consider rows & cols cols
             println("set!")
             rows!.map { ($0 as ACVector).dataSource = self }
+            self.size = Size(m: self.rows!.count, n: self.rows!.first!.dimension)
             updateColumnRepresentation()
         }
     }
@@ -77,9 +78,16 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         }
     }
     
+    public var singular : Bool {
+        get {
+            return true
+        }
+    }
+    
     public init(_ rowVecs: [ACVector]) {
         self.rows = rowVecs
         self.rows!.map { ($0 as ACVector).dataSource = self }
+        
         updateColumnRepresentation()
     }
     
@@ -110,14 +118,34 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
 
     }
     
+    public convenience init(instance: ACMatrix) {
+        self.init(instance.rows!)
+    }
+    
+    public func copy() -> ACMatrix {
+         var rowCopies = self.rows!.map { (vec) -> ACVector in
+            return vec.copy()
+        }
+        return ACMatrix(rowCopies)
+    }
+    
     public func transpose() {
         self.rows = self.columns;
     }
     
     public func invert(){
-        self.eliminate()
-        self.transpose()
-        self.eliminate()
+        let tid = self.eliminate()
+        self.rotate()
+        tid!.rotate()
+        let tid2 = self.eliminate()
+        let rotatedEliminationMatrix = tid2! * tid!
+        rotatedEliminationMatrix.rotate()
+        self.rotate()
+        let d = self.copy()
+        for (idx,  vec) in enumerate(rotatedEliminationMatrix.rows!) {
+            rotatedEliminationMatrix.rows![idx] = vec / d[idx][idx]
+        }
+        self.rows = rotatedEliminationMatrix.rows
     }
     
     public func eliminate() -> ACMatrix? {
@@ -125,6 +153,10 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         self.needsColumnUpdate = true
         return e
         
+    }
+    
+    public func rotate() {
+        ACMatrix.rotateMatrix(self)
     }
     
     private class func vectorArray (from2DElementArray elementArray2D: [[Double]]) -> [ACVector] {
@@ -154,7 +186,7 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         else {
             self.cols = [ACVector]()
         }
-        self.size = Size(m: self.rows!.count, n: self.columns!.count)
+        self.size = Size(m: self.rows!.count, n: self.rows!.first!.dimension)
     }
     
     public class func eliminateAndGetTransformedIdentity(matrix: ACMatrix) -> ACMatrix {
@@ -185,8 +217,26 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
                 break;
             }
         }
-         //using row array to satisfy didSet of rows in ACMatrix implementation
     return id
+    }
+    
+    public class func invertAndGetInverse(inout matrix: ACMatrix) -> ACMatrix? {
+        let lowerTID = ACMatrix.eliminateAndGetTransformedIdentity(matrix)
+        if matrix.dimension == matrix.rows!.count {
+            //full rank
+            
+        }
+        return lowerTID
+    }
+    
+    public class func rotateMatrix(matrix: ACMatrix) {
+        let copied = matrix.copy()
+        for (i, row) in enumerate(matrix.rows!) {
+            for (j, col) in enumerate(matrix.columns!) {
+                matrix[i][j] = copied[matrix.size.m - i - 1][matrix.size.n - j - 1]
+            }
+        }
+        
     }
     
     public final subscript(index: Int) -> ACVector {

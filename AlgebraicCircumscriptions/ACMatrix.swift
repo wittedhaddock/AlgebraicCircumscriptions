@@ -203,20 +203,32 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         
         //------MORE TESTING NEEDED
         let id = ACMatrix(identityOfDimension: matrix.columns!.count)
-        for j in 0..<matrix.columns!.count {
-            var lastNonzeroPivotFactor = 0
-            for i in j..<matrix.rows!.count {
-                var factor = matrix[i + 1][j] / matrix[j][j]
+        let p = ACMatrix(identityOfDimension: matrix.columns!.count)
+        var rowExchanges = 0
+        for j in 0..<matrix.columns!.count * 2 /*row exchanges */ {
+            for i in j - rowExchanges..<matrix.rows!.count {
+                let pivot = matrix[j - rowExchanges][j - rowExchanges]
+                if pivot == 0 {
+                    let holdingMat = matrix.rows![i].copy()
+                    matrix.rows![i] = matrix.rows![i + 1]
+                    matrix.rows![i + 1] = holdingMat
+                    let holdingID = id.rows![i].copy()
+                    id.rows![i] = id.rows![i + 1]
+                    id.rows![i + 1] = holdingID
+                    rowExchanges++
+                    break
+                }
+                var factor = matrix[i + 1][j - rowExchanges] / pivot
 
                 for k in 0..<matrix.columns!.count {
-                    matrix[i + 1][k] -= factor * matrix[j][k]
-                    id[i + 1][k] -= factor * id[j][k]
+                    matrix[i + 1][k] -= factor * matrix[j - rowExchanges][k]
+                    id[i + 1][k] -= factor * id[j - rowExchanges][k]
                 }
                 if i + 1 >= matrix.rows!.count - 1 {
                     break
                 }
             }
-            if j + 1 >= matrix.columns!.count - 1 {
+            if j - rowExchanges + 1 >= matrix.columns!.count - 1 {
                 break;
             }
         }

@@ -168,7 +168,6 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
     }
     
     public func elementValueChanged(#sender: ACVector, indexOfChange index: Int, newElementValue val: Double) {
-        println("vector \(sender) changed value at index \(index) to \(val)")
         self.needsColumnUpdate = true
     }
     
@@ -201,19 +200,23 @@ public class ACMatrix : Euclidean, Printable, VectorDataSource {
         While writing this algo, I referred to http://circumscribing.com/creating-zero-from-a-sequence-of-six/
         
         */
+        
+        //------MORE TESTING NEEDED
         let id = ACMatrix(identityOfDimension: matrix.columns!.count)
         for j in 0..<matrix.columns!.count {
+            var lastNonzeroPivotFactor = 0
             for i in j..<matrix.rows!.count {
-                let factor = matrix[i + 1][j] / matrix[j][j]
+                var factor = matrix[i + 1][j] / matrix[j][j]
+
                 for k in 0..<matrix.columns!.count {
-                    matrix[i + 1][k] -= factor * matrix[i][k]
-                    id[i + 1][k] -= factor * id[i][k]
+                    matrix[i + 1][k] -= factor * matrix[j][k]
+                    id[i + 1][k] -= factor * id[j][k]
                 }
                 if i + 1 >= matrix.rows!.count - 1 {
                     break
                 }
             }
-            if j + 1 >= matrix.rows!.count - 1 {
+            if j + 1 >= matrix.columns!.count - 1 {
                 break;
             }
         }
